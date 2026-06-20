@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chuchula Score Calculator</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .app {
+      max-width: 1000px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    h1, h2 { text-align: center; }
+
+    .card {
+      background: white;
+      padding: 18px;
+      margin-bottom: 18px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+    }
+
+    button {
+      background: #111827;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .tab-buttons,
+    .mode-buttons,
+    .setup-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tab-buttons {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .mode-buttons {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .setup-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .active-btn {
+      background: #2563eb;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    th {
+      background: #111827;
+      color: white;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    td:first-child, th:first-child {
+      text-align: left;
+      font-weight: bold;
+    }
+
+    .round-input {
+      width: 90px;
+      text-align: center;
+      margin: 0;
+    }
+
+    .winner-row {
+      background: #dcfce7;
+      font-weight: bold;
+    }
+
+    .message {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .error { color: #dc2626; }
+    .success { color: #16a34a; }
+    .warning { color: #ca8a04; }
+
+    .winner-banner {
+      background: #dcfce7;
+      border: 2px solid #16a34a;
+      color: #166534;
+      padding: 14px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .tied-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    .tied-box input {
+      width: auto;
+      margin: 0;
+    }
+
+    .history-item {
+      background: #f9fafb;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 700px) {
+      .setup-grid,
+      .tab-buttons,
+      .mode-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { font-size: 24px; }
+
+      th, td {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      .round-input {
+        width: 70px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>Chuchula Score Calculator</h1>
+
+    <div id="setupSection" class="card">
+      <h2>Start New Game</h2>
+
+      <div class="setup-grid">
+        <input id="player1" placeholder="Player 1">
+        <input id="player2" placeholder="Player 2">
+        <input id="player3" placeholder="Player 3">
+        <input id="player4" placeholder="Player 4">
+      </div>
+
+      <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="gameSection" class="hidden">
+      <div id="winnerBanner" class="winner-banner hidden"></div>
+
+      <div class="card">
+        <div class="tab-buttons">
+          <button id="playTabBtn" class="active-btn" onclick="showTab('play')">Play Game</button>
+          <button id="scorecardTabBtn" onclick="showTab('scorecard')">Scorecard</button>
+          <button id="previousTabBtn" onclick="showTab('previous')">Previous Games</button>
+        </div>
+      </div>
+
+      <div id="playTab">
+        <div class="card">
+          <h2>Current Scores</h2>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Total Score</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="scoreboard"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Round Type</h2>
+          <div class="mode-buttons">
+            <button id="normalModeBtn" class="active-btn" onclick="showRoundMode('normal')">Normal Round</button>
+            <button id="specialModeBtn" onclick="showRoundMode('special')">Special Hand</button>
+          </div>
+        </div>
+
+        <div id="normalRoundCard" class="card">
+          <h2>Normal Round</h2>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Points</th>
+                </tr>
+              </thead>
+              <tbody id="roundInputs"></tbody>
+            </table>
+          </div>
+
+          <p id="roundTotalText" class="message">Round Total: 0 / 4</p>
+
+          <label class="tied-box">
+            <input type="checkbox" id="tiedCheckbox" onchange="updateRoundTotal()">
+            Tied
+          </label>
+
+          <button id="saveNormalBtn" onclick="saveNormalRound()">Save Normal Round</button>
+          <p id="normalMessage" class="message"></p>
+        </div>
+
+        <div id="specialRoundCard" class="card hidden">
+          <h2>Special Hand</h2>
+
+          <select id="specialPlayer">
+            <option value="">Select Player</option>
+          </select>
+
+          <select id="specialHand">
+            <option value="">Select Special Hand</option>
+            <option value="4">Chuchula (+4)</option>
+            <option value="5">Achuchula (+5)</option>
+            <option value="10">3 x 3 of a Kind (+10)</option>
+            <option value="7">6 Pairs (+7)</option>
+          </select>
+
+          <button id="saveSpecialBtn" onclick="saveSpecialRound()">Save Special Hand</button>
+          <p id="specialMessage" class="message"></p>
+        </div>
+
+        <button onclick="newGame()">Start New Game</button>
+      </div>
+
+      <div id="scorecardTab" class="hidden">
+        <div class="card">
+          <h2>Scorecard</h2>
+          <div id="roundHistory"></div>
+        </div>
+      </div>
+
+      <div id="previousTab" class="hidden">
+        <div class="card">
+          <h2>Last 10 Saved Games</h2>
+          <div id="savedGames"></div>
+          <button onclick="clearSavedGames()">Clear Saved Games</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class Player {
+      constructor(name) {
+        this.name = name;
+        this.score = 0;
+      }
+
+      addPoints(points) {
+        this.score += points;
+      }
+    }
+
+    class Round {
+      constructor(type, scores) {
+        this.type = type;
+        this.scores = scores;
+        this.date = new Date().toLocaleString();
+      }
+    }
+
+    class Game {
+      constructor(players) {
+        this.players = players;
+        this.rounds = [];
+        this.targetScore = 20;
+        this.isOver = false;
+        this.winner = null;
+        this.saved = false;
+      }
+
+      addRound(round) {
+        if (this.isOver) {
+          alert("Game is already over.");
+          return;
+        }
+
+        round.scores.forEach(scoreEntry => {
+          const player = this.players.find(p => p.name === scoreEntry.name);
+
+          if (player) {
+            player.addPoints(scoreEntry.points);
+          }
+        });
+
+        this.rounds.push(round);
+        this.checkWinner();
+      }
+
+      checkWinner() {
+        const winner = this.players.find(player => player.score >= this.targetScore);
+
+        if (winner) {
+          this.isOver = true;
+          this.winner = winner;
+
+          if (!this.saved) {
+            saveCompletedGame(this);
+            this.saved = true;
+          }
+        }
+      }
+    }
+
+    let currentGame = null;
+
+    function startGame() {
+      const names = [
+        document.getElementById("player1").value.trim(),
+        document.getElementById("player2").value.trim(),
+        document.getElementById("player3").value.trim(),
+        document.getElementById("player4").value.trim()
+      ];
+
+      if (names.some(name => name === "")) {
+        alert("Please enter all 4 player names.");
+        return;
+      }
+
+      currentGame = new Game(names.map(name => new Player(name)));
+
+      document.getElementById("setupSection").classList.add("hidden");
+      document.getElementById("gameSection").classList.remove("hidden");
+
+      buildRoundInputs();
+      buildSpecialPlayerDropdown();
+      updateUI();
+      updateRoundTotal();
+      showTab("play");
+      showRoundMode("normal");
+    }
+
+    function showTab(tabName) {
+      document.getElementById("playTab").classList.add("hidden");
+      document.getElementById("scorecardTab").classList.add("hidden");
+      document.getElementById("previousTab").classList.add("hidden");
+
+      document.getElementById("playTabBtn").classList.remove("active-btn");
+      document.getElementById("scorecardTabBtn").classList.remove("active-btn");
+      document.getElementById("previousTabBtn").classList.remove("active-btn");
+
+      if (tabName === "play") {
+        document.getElementById("playTab").classList.remove("hidden");
+        document.getElementById("playTabBtn").classList.add("active-btn");
+      }
+
+      if (tabName === "scorecard") {
+        document.getElementById("scorecardTab").classList.remove("hidden");
+        document.getElementById("scorecardTabBtn").classList.add("active-btn");
+      }
+
+      if (tabName === "previous") {
+        document.getElementById("previousTab").classList.remove("hidden");
+        document.getElementById("previousTabBtn").classList.add("active-btn");
+        loadSavedGames();
+      }
+    }
+
+    function showRoundMode(mode) {
+      document.getElementById("normalRoundCard").classList.add("hidden");
+      document.getElementById("specialRoundCard").classList.add("hidden");
+
+      document.getElementById("normalModeBtn").classList.remove("active-btn");
+      document.getElementById("specialModeBtn").classList.remove("active-btn");
+
+      if (mode === "normal") {
+        document.getElementById("normalRoundCard").classList.remove("hidden");
+        document.getElementById("normalModeBtn").classList.add("active-btn");
+      }
+
+      if (mode === "special") {
+        document.getElementById("specialRoundCard").classList.remove("hidden");
+        document.getElementById("specialModeBtn").classList.add("active-btn");
+      }
+    }
+
+    function buildRoundInputs() {
+      const container = document.getElementById("roundInputs");
+      container.innerHTML = "";
+
+      currentGame.players.forEach((player, index) => {
+        container.innerHTML += `
+          <tr>
+            <td>${player.name}</td>
+            <td>
+              <input
+                class="round-input"
+                type="number"
+                min="0"
+                step="1"
+                value="0"
+                id="roundScore${index}"
+                oninput="updateRoundTotal()"
+              >
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function buildSpecialPlayerDropdown() {
+      const select = document.getElementById("specialPlayer");
+      select.innerHTML = `<option value="">Select Player</option>`;
+
+      currentGame.players.forEach(player => {
+        select.innerHTML += `<option value="${player.name}">${player.name}</option>`;
+      });
+    }
+
+    function updateRoundTotal() {
+      if (!currentGame) return;
+
+      let total = 0;
+      let hasNegative = false;
+
+      currentGame.players.forEach((player, index) => {
+        const input = document.getElementById("roundScore" + index);
+        const points = Number(input.value);
+
+        if (points < 0) {
+          hasNegative = true;
+          input.style.border = "3px solid red";
+        } else {
+          input.style.border = "1px solid #d1d5db";
+        }
+
+        total += points;
+      });
+
+      const isTied = document.getElementById("tiedCheckbox").checked;
+      const totalText = document.getElementById("roundTotalText");
+
+      totalText.className = "message";
+
+      if (hasNegative) {
+        totalText.textContent = "❌ Points cannot be negative.";
+        totalText.classList.add("error");
+      } else if (total > 4) {
+        totalText.textContent = `❌ Round Total: ${total} / 4. Total cannot be over 4.`;
+        totalText.classList.add("error");
+      } else if (total < 4 && !isTied) {
+        totalText.textContent = `⚠️ Round Total: ${total} / 4. Check Tied if total is less than 4.`;
+        totalText.classList.add("warning");
+      } else if (total < 4 && isTied) {
+        totalText.textContent = `✅ Round Total: ${total} / 4. Tied round accepted.`;
+        totalText.classList.add("success");
+      } else {
+        totalText.textContent = `✅ Round Total: ${total} / 4. Valid round.`;
+        totalText.classList.add("success");
+      }
+    }
+
+    function saveNormalRound() {
+      const scores = [];
+      let total = 0;
+      let hasNegative = false;
+
+      currentGame.players.forEach((player, index) => {
+        const points = Number(document.getElementById("roundScore" + index).value);
+
+        if (points < 0) {
+          hasNegative = true;
+        }
+
+        scores.push({
+          name: player.name,
+          points: points
+        });
+
+        total += points;
+      });
+
+      const isTied = document.getElementById("tiedCheckbox").checked;
+
+      if (hasNegative) {
+        showNormalError("Points cannot be negative.");
+        return;
+      }
+
+      if (total > 4) {
+        showNormalError("Invalid round. Total cannot be over 4.");
+        return;
+      }
+
+      if (total < 4 && !isTied) {
+        showNormalError("If total is less than 4, you must check Tied.");
+        return;
+      }
+
+      const roundType = isTied ? "Normal - Tied" : "Normal";
+      currentGame.addRound(new Round(roundType, scores));
+
+      document.getElementById("normalMessage").className = "message success";
+      document.getElementById("normalMessage").textContent = "Normal round saved.";
+
+      document.getElementById("tiedCheckbox").checked = false;
+
+      buildRoundInputs();
+      updateRoundTotal();
+      updateUI();
+    }
+
+    function showNormalError(message) {
+      document.getElementById("normalMessage").className = "message error";
+      document.getElementById("normalMessage").textContent = message;
+    }
+
+    function saveSpecialRound() {
+      const playerName = document.getElementById("specialPlayer").value;
+      const specialHandSelect = document.getElementById("specialHand");
+      const points = Number(specialHandSelect.value);
+
+      if (playerName === "" || points === 0) {
+        document.getElementById("specialMessage").className = "message error";
+        document.getElementById("specialMessage").textContent = "Select player and special hand.";
+        return;
+      }
+
+      const handText = specialHandSelect.options[specialHandSelect.selectedIndex].text;
+
+      const scores = currentGame.players.map(player => ({
+        name: player.name,
+        points: player.name === playerName ? points : 0
+      }));
+
+      currentGame.addRound(new Round(handText, scores));
+
+      document.getElementById("specialMessage").className = "message success";
+      document.getElementById("specialMessage").textContent = "Special hand saved.";
+
+      document.getElementById("specialPlayer").value = "";
+      document.getElementById("specialHand").value = "";
+
+      updateUI();
+    }
+
+    function updateUI() {
+      updateScoreboard();
+      updateRoundHistory();
+      loadSavedGames();
+      updateGameOverUI();
+    }
+
+    function updateScoreboard() {
+      const scoreboard = document.getElementById("scoreboard");
+      scoreboard.innerHTML = "";
+
+      currentGame.players.forEach(player => {
+        const isWinner = currentGame.winner && currentGame.winner.name === player.name;
+
+        scoreboard.innerHTML += `
+          <tr class="${isWinner ? "winner-row" : ""}">
+            <td>${player.name}</td>
+            <td>${player.score}</td>
+            <td>${isWinner ? "🏆 Winner" : "Playing"}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function updateRoundHistory() {
+      const history = document.getElementById("roundHistory");
+      history.innerHTML = "";
+
+      if (!currentGame || currentGame.rounds.length === 0) {
+        history.innerHTML = "<p>No rounds yet.</p>";
+        return;
+      }
+
+      currentGame.rounds.forEach((round, index) => {
+        let rows = "";
+
+        round.scores.forEach(score => {
+          rows += `
+            <tr>
+              <td>${score.name}</td>
+              <td>${score.points}</td>
+            </tr>
+          `;
+        });
+
+        history.innerHTML += `
+          <div class="history-item">
+            <strong>Round ${index + 1}: ${round.type}</strong><br>
+            <small>${round.date}</small>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Points</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function updateGameOverUI() {
+      const banner = document.getElementById("winnerBanner");
+      const saveNormalBtn = document.getElementById("saveNormalBtn");
+      const saveSpecialBtn = document.getElementById("saveSpecialBtn");
+
+      if (currentGame && currentGame.isOver) {
+        banner.classList.remove("hidden");
+        banner.textContent = `🏆 ${currentGame.winner.name} wins with ${currentGame.winner.score} points. Game saved.`;
+
+        saveNormalBtn.disabled = true;
+        saveSpecialBtn.disabled = true;
+      } else {
+        banner.classList.add("hidden");
+        banner.textContent = "";
+
+        saveNormalBtn.disabled = false;
+        saveSpecialBtn.disabled = false;
+      }
+    }
+
+    function saveCompletedGame(game) {
+      let savedGames = JSON.parse(localStorage.getItem("chuchulaGames")) || [];
+
+      const completedGame = {
+        date: new Date().toLocaleString(),
+        winner: game.winner.name,
+        finalScores: game.players.map(player => ({
+          name: player.name,
+          score: player.score
+        })),
+        rounds: game.rounds
+      };
+
+      savedGames.unshift(completedGame);
+      savedGames = savedGames.slice(0, 10);
+
+      localStorage.setItem("chuchulaGames", JSON.stringify(savedGames));
+    }
+
+    function loadSavedGames() {
+      const savedGames = JSON.parse(localStorage.getItem("chuchulaGames")) || [];
+      const container = document.getElementById("savedGames");
+
+      container.innerHTML = "";
+
+      if (savedGames.length === 0) {
+        container.innerHTML = "<p>No saved games yet.</p>";
+        return;
+      }
+
+      savedGames.forEach((game, index) => {
+        let rows = "";
+
+        game.finalScores.forEach(player => {
+          rows += `
+            <tr>
+              <td>${player.name}</td>
+              <td>${player.score}</td>
+            </tr>
+          `;
+        });
+
+        container.innerHTML += `
+          <div class="history-item">
+            <strong>Game ${index + 1}</strong><br>
+            Date: ${game.date}<br>
+            Winner: ${game.winner}
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Final Score</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function clearSavedGames() {
+      localStorage.removeItem("chuchulaGames");
+      loadSavedGames();
+    }
+
+    function newGame() {
+      location.reload();
+    }
+
+    loadSavedGames();
+  </script>
+</body>
+</html>
