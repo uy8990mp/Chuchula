@@ -351,8 +351,8 @@ function updateRoundTotal(){
     totalText.textContent=`❌ Round Total: ${total} / 4. Total cannot be over 4.`;
     totalText.classList.add("error");
   }else if(total<4 && !isTied){
-    totalText.textContent=`⚠️ Round Total: ${total} / 4. Check Tied if total is less than 4.`;
-    totalText.classList.add("warning");
+    totalText.textContent=` Round Total: ${total} / 4. Check Tied if total is less than 4.`;
+    //totalText.classList.add("warning");
   }else if(total<4 && isTied){
     totalText.textContent=`✅ Round Total: ${total} / 4. Tied round accepted.`;
     totalText.classList.add("success");
