@@ -1,759 +1,691 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chuchula Score Calculator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chuchula</title>
 
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f3f4f6;
-      color: #111827;
-    }
-
-    .app {
-      max-width: 1000px;
-      margin: auto;
-      padding: 16px;
-    }
-
-    h1, h2 { text-align: center; }
-
-    .card {
-      background: white;
-      padding: 18px;
-      margin-bottom: 18px;
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      margin-top: 8px;
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-    }
-
-    button {
-      background: #111827;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-    }
-
-    button:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-    }
-
-    .tab-buttons,
-    .mode-buttons,
-    .setup-grid {
-      display: grid;
-      gap: 10px;
-    }
-
-    .tab-buttons {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .mode-buttons {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .setup-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .active-btn {
-      background: #2563eb;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-    }
-
-    th {
-      background: #111827;
-      color: white;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    td:first-child, th:first-child {
-      text-align: left;
-      font-weight: bold;
-    }
-
-    .round-input {
-      width: 90px;
-      text-align: center;
-      margin: 0;
-    }
-
-    .winner-row {
-      background: #dcfce7;
-      font-weight: bold;
-    }
-
-    .message {
-      font-weight: bold;
-      margin-top: 10px;
-    }
-
-    .error { color: #dc2626; }
-    .success { color: #16a34a; }
-    .warning { color: #ca8a04; }
-
-    .winner-banner {
-      background: #dcfce7;
-      border: 2px solid #16a34a;
-      color: #166534;
-      padding: 14px;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 18px;
-    }
-
-    .tied-box {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px;
-      font-weight: bold;
-    }
-
-    .tied-box input {
-      width: auto;
-      margin: 0;
-    }
-
-    .history-item {
-      background: #f9fafb;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-    }
-
-    @media (max-width: 700px) {
-      .setup-grid,
-      .tab-buttons,
-      .mode-buttons {
-        grid-template-columns: 1fr;
-      }
-
-      h1 { font-size: 24px; }
-
-      th, td {
-        padding: 10px;
-        font-size: 14px;
-      }
-
-      .round-input {
-        width: 70px;
-      }
-    }
-  </style>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f4f6;color:#111827;padding-bottom:95px}
+.app{max-width:1000px;margin:auto;padding:16px}
+h1,h2{text-align:center}
+.card{background:white;padding:18px;margin-bottom:18px;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+input,select,button{width:100%;padding:14px;font-size:16px;margin-top:10px;border-radius:12px;border:1px solid #d1d5db}
+button{background:#111827;color:white;font-weight:bold;cursor:pointer;border:none}
+button:disabled{background:#9ca3af}
+.primary{background:#4f63e6}
+.hidden{display:none}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mode-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.active-btn{background:#4f63e6}
+.edit-btn{background:#2563eb}
+.delete-btn{background:#dc2626}
+.save-btn{background:#16a34a}
+.cancel-btn{background:#6b7280}
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th{background:#111827;color:white}
+th,td{padding:12px;text-align:center;border-bottom:1px solid #e5e7eb}
+td:first-child,th:first-child{text-align:left;font-weight:bold}
+.round-input{width:80px;text-align:center;margin:0}
+.winner-row{background:#dcfce7;font-weight:bold}
+.message{font-weight:bold;margin-top:10px}
+.error{color:#dc2626}.success{color:#16a34a}.warning{color:#ca8a04}
+.winner-banner{background:#dcfce7;border:2px solid #16a34a;color:#166534;padding:14px;border-radius:12px;text-align:center;font-size:20px;font-weight:bold;margin-bottom:18px}
+.tied-box{display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:bold}
+.tied-box input{width:auto;margin:0}
+.history-item{background:#f9fafb;padding:12px;margin-top:10px;border-radius:12px;border:1px solid #e5e7eb}
+.landing-buttons button{font-size:26px;padding:26px;margin-top:24px;border-radius:14px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;box-shadow:0 -2px 10px rgba(0,0,0,.15)}
+.bottom-nav button{margin:0;padding:14px;font-size:14px}
+@media(max-width:700px){.grid4,.mode-buttons,.action-row{grid-template-columns:1fr}h1{font-size:26px}th,td{font-size:14px;padding:10px}.landing-buttons button{font-size:22px}}
+</style>
 </head>
 
 <body>
-  <div class="app">
-    <h1>Chuchula Score Calculator</h1>
+<div class="app">
+<h1>Chuchula</h1>
 
-    <div id="setupSection" class="card">
-      <h2>Start New Game</h2>
+<div id="landingSection" class="card landing-buttons">
+  <button class="primary" onclick="showNewGame()">New Game</button>
+  <button id="continueBtn" onclick="continueGame()">Continue Game</button>
+  <button onclick="showPreviousGames()">Previous Games</button>
+</div>
 
-      <div class="setup-grid">
-        <input id="player1" placeholder="Player 1">
-        <input id="player2" placeholder="Player 2">
-        <input id="player3" placeholder="Player 3">
-        <input id="player4" placeholder="Player 4">
+<div id="newGameSection" class="card hidden">
+  <h2>Start New Game</h2>
+  <div class="grid4">
+    <input id="player1" placeholder="Player 1">
+    <input id="player2" placeholder="Player 2">
+    <input id="player3" placeholder="Player 3">
+    <input id="player4" placeholder="Player 4">
+  </div>
+  <button onclick="startGame()">Start Game</button>
+  <button onclick="showLanding()">Back</button>
+</div>
+
+<div id="gameSection" class="hidden">
+  <div id="winnerBanner" class="winner-banner hidden"></div>
+
+  <div id="playScreen">
+    <div class="card">
+      <h2>Round Type</h2>
+      <div class="mode-buttons">
+        <button id="normalModeBtn" class="active-btn" onclick="showRoundMode('normal')">Normal Round</button>
+        <button id="specialModeBtn" onclick="showRoundMode('special')">Special Hand</button>
       </div>
-
-      <button onclick="startGame()">Start Game</button>
     </div>
 
-    <div id="gameSection" class="hidden">
-      <div id="winnerBanner" class="winner-banner hidden"></div>
-
-      <div class="card">
-        <div class="tab-buttons">
-          <button id="playTabBtn" class="active-btn" onclick="showTab('play')">Play Game</button>
-          <button id="scorecardTabBtn" onclick="showTab('scorecard')">Scorecard</button>
-          <button id="previousTabBtn" onclick="showTab('previous')">Previous Games</button>
-        </div>
+    <div id="normalRoundCard" class="card">
+      <h2>Normal Round</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Player</th><th>Points</th></tr></thead>
+          <tbody id="roundInputs"></tbody>
+        </table>
       </div>
 
-      <div id="playTab">
-        <div class="card">
-          <h2>Current Scores</h2>
+      <p id="roundTotalText" class="message">Round Total: 0 / 4</p>
 
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>Total Score</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="scoreboard"></tbody>
-            </table>
-          </div>
-        </div>
+      <label class="tied-box">
+        <input type="checkbox" id="tiedCheckbox" onchange="updateRoundTotal()">
+        Tied
+      </label>
 
-        <div class="card">
-          <h2>Round Type</h2>
-          <div class="mode-buttons">
-            <button id="normalModeBtn" class="active-btn" onclick="showRoundMode('normal')">Normal Round</button>
-            <button id="specialModeBtn" onclick="showRoundMode('special')">Special Hand</button>
-          </div>
-        </div>
+      <button id="saveNormalBtn" onclick="saveNormalRound()">Save Normal Round</button>
+      <p id="normalMessage" class="message"></p>
+    </div>
 
-        <div id="normalRoundCard" class="card">
-          <h2>Normal Round</h2>
+    <div id="specialRoundCard" class="card hidden">
+      <h2>Special Hand</h2>
+      <select id="specialPlayer"><option value="">Select Player</option></select>
+      <select id="specialHand">
+        <option value="">Select Special Hand</option>
+        <option value="4">Chuchula (+4)</option>
+        <option value="5">Achuchula (+5)</option>
+        <option value="10">3 x 3 of a Kind (+10)</option>
+        <option value="7">6 Pairs (+7)</option>
+      </select>
+      <button id="saveSpecialBtn" onclick="saveSpecialRound()">Save Special Hand</button>
+      <p id="specialMessage" class="message"></p>
+    </div>
 
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>Points</th>
-                </tr>
-              </thead>
-              <tbody id="roundInputs"></tbody>
-            </table>
-          </div>
-
-          <p id="roundTotalText" class="message">Round Total: 0 / 4</p>
-
-          <label class="tied-box">
-            <input type="checkbox" id="tiedCheckbox" onchange="updateRoundTotal()">
-            Tied
-          </label>
-
-          <button id="saveNormalBtn" onclick="saveNormalRound()">Save Normal Round</button>
-          <p id="normalMessage" class="message"></p>
-        </div>
-
-        <div id="specialRoundCard" class="card hidden">
-          <h2>Special Hand</h2>
-
-          <select id="specialPlayer">
-            <option value="">Select Player</option>
-          </select>
-
-          <select id="specialHand">
-            <option value="">Select Special Hand</option>
-            <option value="4">Chuchula (+4)</option>
-            <option value="5">Achuchula (+5)</option>
-            <option value="10">3 x 3 of a Kind (+10)</option>
-            <option value="7">6 Pairs (+7)</option>
-          </select>
-
-          <button id="saveSpecialBtn" onclick="saveSpecialRound()">Save Special Hand</button>
-          <p id="specialMessage" class="message"></p>
-        </div>
-
-        <button onclick="newGame()">Start New Game</button>
-      </div>
-
-      <div id="scorecardTab" class="hidden">
-        <div class="card">
-          <h2>Scorecard</h2>
-          <div id="roundHistory"></div>
-        </div>
-      </div>
-
-      <div id="previousTab" class="hidden">
-        <div class="card">
-          <h2>Last 10 Saved Games</h2>
-          <div id="savedGames"></div>
-          <button onclick="clearSavedGames()">Clear Saved Games</button>
-        </div>
+    <div class="card">
+      <h2>Current Scores</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Player</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody id="scoreboard"></tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <script>
-    class Player {
-      constructor(name) {
-        this.name = name;
-        this.score = 0;
-      }
+  <div id="scorecardScreen" class="hidden">
+    <div class="card">
+      <h2>Scorecard</h2>
+      <div id="roundHistory"></div>
+    </div>
+  </div>
+</div>
 
-      addPoints(points) {
-        this.score += points;
-      }
+<div id="previousGamesSection" class="card hidden">
+  <h2>Previous Games</h2>
+  <div id="savedGames"></div>
+  <button onclick="clearSavedGames()">Clear Saved Games</button>
+  <button onclick="showLanding()">Back</button>
+</div>
+</div>
+
+<div id="bottomNav" class="bottom-nav hidden">
+  <button onclick="showGameScreen('play')">Play Game</button>
+  <button onclick="showGameScreen('scorecard')">Scorecard</button>
+  <button onclick="showLanding()">Home</button>
+</div>
+
+<script>
+class Player{
+  constructor(name,score=0){this.name=name;this.score=score}
+  addPoints(points){this.score+=points}
+}
+
+class Round{
+  constructor(type,scores,date=new Date().toLocaleString()){
+    this.type=type;
+    this.scores=scores;
+    this.date=date;
+  }
+}
+
+class Game{
+  constructor(players,rounds=[],isOver=false,winner=null,saved=false,id=Date.now().toString()){
+    this.id=id;
+    this.players=players;
+    this.rounds=rounds;
+    this.targetScore=20;
+    this.isOver=isOver;
+    this.winner=winner;
+    this.saved=saved;
+  }
+
+  addRound(round){
+    if(this.isOver){alert("Game is already over.");return}
+
+    round.scores.forEach(scoreEntry=>{
+      const player=this.players.find(p=>p.name===scoreEntry.name);
+      if(player){player.addPoints(scoreEntry.points)}
+    });
+
+    this.rounds.push(round);
+    this.checkWinner();
+    saveCurrentGame();
+  }
+
+  checkWinner(){
+    const winner=this.players.find(player=>player.score>=this.targetScore);
+    if(winner){
+      this.isOver=true;
+      this.winner=winner;
+      saveOrUpdateCompletedGame(this);
+      localStorage.removeItem("chuchulaCurrentGame");
+      this.saved=true;
+    }
+  }
+}
+
+let currentGame=null;
+
+function hideAll(){
+  document.getElementById("landingSection").classList.add("hidden");
+  document.getElementById("newGameSection").classList.add("hidden");
+  document.getElementById("gameSection").classList.add("hidden");
+  document.getElementById("previousGamesSection").classList.add("hidden");
+  document.getElementById("bottomNav").classList.add("hidden");
+}
+
+function showLanding(){
+  hideAll();
+  document.getElementById("landingSection").classList.remove("hidden");
+  refreshLanding();
+}
+
+function refreshLanding(){
+  const savedCurrent=localStorage.getItem("chuchulaCurrentGame");
+  document.getElementById("continueBtn").style.display=savedCurrent?"block":"none";
+}
+
+function showNewGame(){
+  hideAll();
+  document.getElementById("newGameSection").classList.remove("hidden");
+}
+
+function startGame(){
+  const names=[
+    document.getElementById("player1").value.trim(),
+    document.getElementById("player2").value.trim(),
+    document.getElementById("player3").value.trim(),
+    document.getElementById("player4").value.trim()
+  ];
+
+  if(names.some(name=>name==="")){
+    alert("Please enter all 4 player names.");
+    return;
+  }
+
+  currentGame=new Game(names.map(name=>new Player(name)));
+  saveCurrentGame();
+  openGame();
+}
+
+function continueGame(){
+  const saved=localStorage.getItem("chuchulaCurrentGame");
+  if(!saved){alert("No game to continue.");return}
+
+  const data=JSON.parse(saved);
+  currentGame=new Game(
+    data.players.map(p=>new Player(p.name,p.score)),
+    data.rounds.map(r=>new Round(r.type,r.scores,r.date)),
+    data.isOver,
+    data.winner,
+    data.saved,
+    data.id
+  );
+
+  openGame();
+}
+
+function openGame(){
+  hideAll();
+  document.getElementById("gameSection").classList.remove("hidden");
+  document.getElementById("bottomNav").classList.remove("hidden");
+  buildRoundInputs();
+  buildSpecialPlayerDropdown();
+  updateUI();
+  updateRoundTotal();
+  showGameScreen("play");
+  showRoundMode("normal");
+}
+
+function showGameScreen(screen){
+  document.getElementById("playScreen").classList.add("hidden");
+  document.getElementById("scorecardScreen").classList.add("hidden");
+
+  if(screen==="play") document.getElementById("playScreen").classList.remove("hidden");
+  if(screen==="scorecard") document.getElementById("scorecardScreen").classList.remove("hidden");
+}
+
+function showPreviousGames(){
+  hideAll();
+  document.getElementById("previousGamesSection").classList.remove("hidden");
+  loadSavedGames();
+}
+
+function showRoundMode(mode){
+  document.getElementById("normalRoundCard").classList.add("hidden");
+  document.getElementById("specialRoundCard").classList.add("hidden");
+  document.getElementById("normalModeBtn").classList.remove("active-btn");
+  document.getElementById("specialModeBtn").classList.remove("active-btn");
+
+  if(mode==="normal"){
+    document.getElementById("normalRoundCard").classList.remove("hidden");
+    document.getElementById("normalModeBtn").classList.add("active-btn");
+  }
+
+  if(mode==="special"){
+    document.getElementById("specialRoundCard").classList.remove("hidden");
+    document.getElementById("specialModeBtn").classList.add("active-btn");
+  }
+}
+
+function buildRoundInputs(){
+  const container=document.getElementById("roundInputs");
+  container.innerHTML="";
+
+  currentGame.players.forEach((player,index)=>{
+    container.innerHTML+=`
+      <tr>
+        <td>${player.name}</td>
+        <td><input class="round-input" type="number" min="0" step="1" value="0" id="roundScore${index}" oninput="updateRoundTotal()"></td>
+      </tr>`;
+  });
+}
+
+function buildSpecialPlayerDropdown(){
+  const select=document.getElementById("specialPlayer");
+  select.innerHTML=`<option value="">Select Player</option>`;
+  currentGame.players.forEach(player=>{
+    select.innerHTML+=`<option value="${player.name}">${player.name}</option>`;
+  });
+}
+
+function updateRoundTotal(){
+  if(!currentGame)return;
+
+  let total=0;
+  let hasNegative=false;
+
+  currentGame.players.forEach((player,index)=>{
+    const input=document.getElementById("roundScore"+index);
+    const points=Number(input.value);
+
+    if(points<0){
+      hasNegative=true;
+      input.style.border="3px solid red";
+    }else{
+      input.style.border="1px solid #d1d5db";
     }
 
-    class Round {
-      constructor(type, scores) {
-        this.type = type;
-        this.scores = scores;
-        this.date = new Date().toLocaleString();
-      }
+    total+=points;
+  });
+
+  const isTied=document.getElementById("tiedCheckbox").checked;
+  const totalText=document.getElementById("roundTotalText");
+  totalText.className="message";
+
+  if(hasNegative){
+    totalText.textContent="❌ Points cannot be negative.";
+    totalText.classList.add("error");
+  }else if(total>4){
+    totalText.textContent=`❌ Round Total: ${total} / 4. Total cannot be over 4.`;
+    totalText.classList.add("error");
+  }else if(total<4 && !isTied){
+    totalText.textContent=`⚠️ Round Total: ${total} / 4. Check Tied if total is less than 4.`;
+    totalText.classList.add("warning");
+  }else if(total<4 && isTied){
+    totalText.textContent=`✅ Round Total: ${total} / 4. Tied round accepted.`;
+    totalText.classList.add("success");
+  }else{
+    totalText.textContent=`✅ Round Total: ${total} / 4. Valid round.`;
+    totalText.classList.add("success");
+  }
+}
+
+function saveNormalRound(){
+  const scores=[];
+  let total=0;
+  let hasNegative=false;
+
+  currentGame.players.forEach((player,index)=>{
+    const points=Number(document.getElementById("roundScore"+index).value);
+    if(points<0)hasNegative=true;
+    scores.push({name:player.name,points});
+    total+=points;
+  });
+
+  const isTied=document.getElementById("tiedCheckbox").checked;
+
+  if(hasNegative)return showNormalError("Points cannot be negative.");
+  if(total>4)return showNormalError("Invalid round. Total cannot be over 4.");
+  if(total<4 && !isTied)return showNormalError("If total is less than 4, you must check Tied.");
+
+  currentGame.addRound(new Round(isTied?"Normal - Tied":"Normal",scores));
+
+  document.getElementById("normalMessage").className="message success";
+  document.getElementById("normalMessage").textContent="Normal round saved.";
+  document.getElementById("tiedCheckbox").checked=false;
+
+  buildRoundInputs();
+  updateRoundTotal();
+  updateUI();
+}
+
+function showNormalError(message){
+  document.getElementById("normalMessage").className="message error";
+  document.getElementById("normalMessage").textContent=message;
+}
+
+function saveSpecialRound(){
+  const playerName=document.getElementById("specialPlayer").value;
+  const handSelect=document.getElementById("specialHand");
+  const points=Number(handSelect.value);
+
+  if(playerName==="" || points===0){
+    document.getElementById("specialMessage").className="message error";
+    document.getElementById("specialMessage").textContent="Select player and special hand.";
+    return;
+  }
+
+  const handText=handSelect.options[handSelect.selectedIndex].text;
+
+  const scores=currentGame.players.map(player=>({
+    name:player.name,
+    points:player.name===playerName?points:0
+  }));
+
+  currentGame.addRound(new Round(handText,scores));
+
+  document.getElementById("specialMessage").className="message success";
+  document.getElementById("specialMessage").textContent="Special hand saved.";
+  document.getElementById("specialPlayer").value="";
+  document.getElementById("specialHand").value="";
+
+  updateUI();
+}
+
+function updateUI(){
+  updateScoreboard();
+  updateRoundHistory();
+  updateGameOverUI();
+}
+
+function updateScoreboard(){
+  const scoreboard=document.getElementById("scoreboard");
+  scoreboard.innerHTML="";
+
+  currentGame.players.forEach(player=>{
+    const isWinner=currentGame.winner && currentGame.winner.name===player.name;
+    scoreboard.innerHTML+=`
+      <tr class="${isWinner?"winner-row":""}">
+        <td>${player.name}</td>
+        <td>${player.score}</td>
+        <td>${isWinner?"🏆 Winner":"Playing"}</td>
+      </tr>`;
+  });
+}
+
+function updateRoundHistory(){
+  const history=document.getElementById("roundHistory");
+  history.innerHTML="";
+
+  if(!currentGame || currentGame.rounds.length===0){
+    history.innerHTML="<p>No rounds yet.</p>";
+    return;
+  }
+
+  currentGame.rounds.forEach((round,index)=>{
+    let rows="";
+    round.scores.forEach(score=>{
+      rows+=`<tr><td>${score.name}</td><td>${score.points}</td></tr>`;
+    });
+
+    history.innerHTML+=`
+      <div class="history-item">
+        <strong>Round ${index+1}: ${round.type}</strong><br>
+        <small>${round.date}</small>
+
+        <div class="action-row">
+          <button class="edit-btn" onclick="editRound(${index})">✏️ Edit</button>
+          <button class="delete-btn" onclick="deleteRound(${index})">🗑️ Delete</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Player</th><th>Points</th></tr></thead>
+            <tbody id="roundBody_${index}">${rows}</tbody>
+          </table>
+        </div>
+
+        <div id="editArea_${index}"></div>
+      </div>`;
+  });
+}
+
+function editRound(roundIndex){
+  const round=currentGame.rounds[roundIndex];
+  let rows="";
+
+  round.scores.forEach((score,playerIndex)=>{
+    rows+=`
+      <tr>
+        <td>${score.name}</td>
+        <td><input class="round-input" type="number" min="0" step="1" value="${score.points}" id="edit_${roundIndex}_${playerIndex}"></td>
+      </tr>`;
+  });
+
+  document.getElementById(`roundBody_${roundIndex}`).innerHTML=rows;
+
+  const isNormalRound=round.type.startsWith("Normal");
+  const isTied=round.type.includes("Tied")?"checked":"";
+
+  document.getElementById(`editArea_${roundIndex}`).innerHTML=`
+    ${isNormalRound?`
+      <label class="tied-box">
+        <input type="checkbox" id="editTied_${roundIndex}" ${isTied}>
+        Tied
+      </label>
+    `:""}
+
+    <p id="editMessage_${roundIndex}" class="message"></p>
+
+    <div class="action-row">
+      <button class="save-btn" onclick="saveRoundEdit(${roundIndex})">💾 Save Changes</button>
+      <button class="cancel-btn" onclick="updateRoundHistory()">Cancel</button>
+    </div>`;
+}
+
+function saveRoundEdit(roundIndex){
+  const round=currentGame.rounds[roundIndex];
+  const newScores=[];
+  let total=0;
+  let hasNegative=false;
+
+  round.scores.forEach((score,playerIndex)=>{
+    const value=Number(document.getElementById(`edit_${roundIndex}_${playerIndex}`).value);
+    if(value<0) hasNegative=true;
+    newScores.push({name:score.name,points:value});
+    total+=value;
+  });
+
+  const messageElement=document.getElementById(`editMessage_${roundIndex}`);
+  const isNormalRound=round.type.startsWith("Normal");
+
+  if(hasNegative){
+    messageElement.className="message error";
+    messageElement.textContent="Points cannot be negative.";
+    return;
+  }
+
+  if(isNormalRound){
+    const isTied=document.getElementById(`editTied_${roundIndex}`).checked;
+
+    if(total>4){
+      messageElement.className="message error";
+      messageElement.textContent="Normal round total cannot be over 4.";
+      return;
     }
 
-    class Game {
-      constructor(players) {
-        this.players = players;
-        this.rounds = [];
-        this.targetScore = 20;
-        this.isOver = false;
-        this.winner = null;
-        this.saved = false;
-      }
-
-      addRound(round) {
-        if (this.isOver) {
-          alert("Game is already over.");
-          return;
-        }
-
-        round.scores.forEach(scoreEntry => {
-          const player = this.players.find(p => p.name === scoreEntry.name);
-
-          if (player) {
-            player.addPoints(scoreEntry.points);
-          }
-        });
-
-        this.rounds.push(round);
-        this.checkWinner();
-      }
-
-      checkWinner() {
-        const winner = this.players.find(player => player.score >= this.targetScore);
-
-        if (winner) {
-          this.isOver = true;
-          this.winner = winner;
-
-          if (!this.saved) {
-            saveCompletedGame(this);
-            this.saved = true;
-          }
-        }
-      }
+    if(total<4 && !isTied){
+      messageElement.className="message error";
+      messageElement.textContent="If total is less than 4, Tied must be checked.";
+      return;
     }
 
-    let currentGame = null;
-
-    function startGame() {
-      const names = [
-        document.getElementById("player1").value.trim(),
-        document.getElementById("player2").value.trim(),
-        document.getElementById("player3").value.trim(),
-        document.getElementById("player4").value.trim()
-      ];
-
-      if (names.some(name => name === "")) {
-        alert("Please enter all 4 player names.");
-        return;
-      }
-
-      currentGame = new Game(names.map(name => new Player(name)));
-
-      document.getElementById("setupSection").classList.add("hidden");
-      document.getElementById("gameSection").classList.remove("hidden");
-
-      buildRoundInputs();
-      buildSpecialPlayerDropdown();
-      updateUI();
-      updateRoundTotal();
-      showTab("play");
-      showRoundMode("normal");
-    }
-
-    function showTab(tabName) {
-      document.getElementById("playTab").classList.add("hidden");
-      document.getElementById("scorecardTab").classList.add("hidden");
-      document.getElementById("previousTab").classList.add("hidden");
-
-      document.getElementById("playTabBtn").classList.remove("active-btn");
-      document.getElementById("scorecardTabBtn").classList.remove("active-btn");
-      document.getElementById("previousTabBtn").classList.remove("active-btn");
-
-      if (tabName === "play") {
-        document.getElementById("playTab").classList.remove("hidden");
-        document.getElementById("playTabBtn").classList.add("active-btn");
-      }
-
-      if (tabName === "scorecard") {
-        document.getElementById("scorecardTab").classList.remove("hidden");
-        document.getElementById("scorecardTabBtn").classList.add("active-btn");
-      }
-
-      if (tabName === "previous") {
-        document.getElementById("previousTab").classList.remove("hidden");
-        document.getElementById("previousTabBtn").classList.add("active-btn");
-        loadSavedGames();
-      }
-    }
-
-    function showRoundMode(mode) {
-      document.getElementById("normalRoundCard").classList.add("hidden");
-      document.getElementById("specialRoundCard").classList.add("hidden");
-
-      document.getElementById("normalModeBtn").classList.remove("active-btn");
-      document.getElementById("specialModeBtn").classList.remove("active-btn");
-
-      if (mode === "normal") {
-        document.getElementById("normalRoundCard").classList.remove("hidden");
-        document.getElementById("normalModeBtn").classList.add("active-btn");
-      }
-
-      if (mode === "special") {
-        document.getElementById("specialRoundCard").classList.remove("hidden");
-        document.getElementById("specialModeBtn").classList.add("active-btn");
-      }
-    }
-
-    function buildRoundInputs() {
-      const container = document.getElementById("roundInputs");
-      container.innerHTML = "";
-
-      currentGame.players.forEach((player, index) => {
-        container.innerHTML += `
-          <tr>
-            <td>${player.name}</td>
-            <td>
-              <input
-                class="round-input"
-                type="number"
-                min="0"
-                step="1"
-                value="0"
-                id="roundScore${index}"
-                oninput="updateRoundTotal()"
-              >
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    function buildSpecialPlayerDropdown() {
-      const select = document.getElementById("specialPlayer");
-      select.innerHTML = `<option value="">Select Player</option>`;
-
-      currentGame.players.forEach(player => {
-        select.innerHTML += `<option value="${player.name}">${player.name}</option>`;
-      });
-    }
-
-    function updateRoundTotal() {
-      if (!currentGame) return;
-
-      let total = 0;
-      let hasNegative = false;
-
-      currentGame.players.forEach((player, index) => {
-        const input = document.getElementById("roundScore" + index);
-        const points = Number(input.value);
-
-        if (points < 0) {
-          hasNegative = true;
-          input.style.border = "3px solid red";
-        } else {
-          input.style.border = "1px solid #d1d5db";
-        }
-
-        total += points;
-      });
-
-      const isTied = document.getElementById("tiedCheckbox").checked;
-      const totalText = document.getElementById("roundTotalText");
-
-      totalText.className = "message";
-
-      if (hasNegative) {
-        totalText.textContent = "❌ Points cannot be negative.";
-        totalText.classList.add("error");
-      } else if (total > 4) {
-        totalText.textContent = `❌ Round Total: ${total} / 4. Total cannot be over 4.`;
-        totalText.classList.add("error");
-      } else if (total < 4 && !isTied) {
-        totalText.textContent = `⚠️ Round Total: ${total} / 4. Check Tied if total is less than 4.`;
-        totalText.classList.add("warning");
-      } else if (total < 4 && isTied) {
-        totalText.textContent = `✅ Round Total: ${total} / 4. Tied round accepted.`;
-        totalText.classList.add("success");
-      } else {
-        totalText.textContent = `✅ Round Total: ${total} / 4. Valid round.`;
-        totalText.classList.add("success");
-      }
-    }
-
-    function saveNormalRound() {
-      const scores = [];
-      let total = 0;
-      let hasNegative = false;
-
-      currentGame.players.forEach((player, index) => {
-        const points = Number(document.getElementById("roundScore" + index).value);
-
-        if (points < 0) {
-          hasNegative = true;
-        }
-
-        scores.push({
-          name: player.name,
-          points: points
-        });
-
-        total += points;
-      });
-
-      const isTied = document.getElementById("tiedCheckbox").checked;
-
-      if (hasNegative) {
-        showNormalError("Points cannot be negative.");
-        return;
-      }
-
-      if (total > 4) {
-        showNormalError("Invalid round. Total cannot be over 4.");
-        return;
-      }
-
-      if (total < 4 && !isTied) {
-        showNormalError("If total is less than 4, you must check Tied.");
-        return;
-      }
-
-      const roundType = isTied ? "Normal - Tied" : "Normal";
-      currentGame.addRound(new Round(roundType, scores));
-
-      document.getElementById("normalMessage").className = "message success";
-      document.getElementById("normalMessage").textContent = "Normal round saved.";
-
-      document.getElementById("tiedCheckbox").checked = false;
-
-      buildRoundInputs();
-      updateRoundTotal();
-      updateUI();
-    }
-
-    function showNormalError(message) {
-      document.getElementById("normalMessage").className = "message error";
-      document.getElementById("normalMessage").textContent = message;
-    }
-
-    function saveSpecialRound() {
-      const playerName = document.getElementById("specialPlayer").value;
-      const specialHandSelect = document.getElementById("specialHand");
-      const points = Number(specialHandSelect.value);
-
-      if (playerName === "" || points === 0) {
-        document.getElementById("specialMessage").className = "message error";
-        document.getElementById("specialMessage").textContent = "Select player and special hand.";
-        return;
-      }
-
-      const handText = specialHandSelect.options[specialHandSelect.selectedIndex].text;
-
-      const scores = currentGame.players.map(player => ({
-        name: player.name,
-        points: player.name === playerName ? points : 0
-      }));
-
-      currentGame.addRound(new Round(handText, scores));
-
-      document.getElementById("specialMessage").className = "message success";
-      document.getElementById("specialMessage").textContent = "Special hand saved.";
-
-      document.getElementById("specialPlayer").value = "";
-      document.getElementById("specialHand").value = "";
-
-      updateUI();
-    }
-
-    function updateUI() {
-      updateScoreboard();
-      updateRoundHistory();
-      loadSavedGames();
-      updateGameOverUI();
-    }
-
-    function updateScoreboard() {
-      const scoreboard = document.getElementById("scoreboard");
-      scoreboard.innerHTML = "";
-
-      currentGame.players.forEach(player => {
-        const isWinner = currentGame.winner && currentGame.winner.name === player.name;
-
-        scoreboard.innerHTML += `
-          <tr class="${isWinner ? "winner-row" : ""}">
-            <td>${player.name}</td>
-            <td>${player.score}</td>
-            <td>${isWinner ? "🏆 Winner" : "Playing"}</td>
-          </tr>
-        `;
-      });
-    }
-
-    function updateRoundHistory() {
-      const history = document.getElementById("roundHistory");
-      history.innerHTML = "";
-
-      if (!currentGame || currentGame.rounds.length === 0) {
-        history.innerHTML = "<p>No rounds yet.</p>";
-        return;
-      }
-
-      currentGame.rounds.forEach((round, index) => {
-        let rows = "";
-
-        round.scores.forEach(score => {
-          rows += `
-            <tr>
-              <td>${score.name}</td>
-              <td>${score.points}</td>
-            </tr>
-          `;
-        });
-
-        history.innerHTML += `
-          <div class="history-item">
-            <strong>Round ${index + 1}: ${round.type}</strong><br>
-            <small>${round.date}</small>
-
-            <div class="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Player</th>
-                    <th>Points</th>
-                  </tr>
-                </thead>
-                <tbody>${rows}</tbody>
-              </table>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function updateGameOverUI() {
-      const banner = document.getElementById("winnerBanner");
-      const saveNormalBtn = document.getElementById("saveNormalBtn");
-      const saveSpecialBtn = document.getElementById("saveSpecialBtn");
-
-      if (currentGame && currentGame.isOver) {
-        banner.classList.remove("hidden");
-        banner.textContent = `🏆 ${currentGame.winner.name} wins with ${currentGame.winner.score} points. Game saved.`;
-
-        saveNormalBtn.disabled = true;
-        saveSpecialBtn.disabled = true;
-      } else {
-        banner.classList.add("hidden");
-        banner.textContent = "";
-
-        saveNormalBtn.disabled = false;
-        saveSpecialBtn.disabled = false;
-      }
-    }
-
-    function saveCompletedGame(game) {
-      let savedGames = JSON.parse(localStorage.getItem("chuchulaGames")) || [];
-
-      const completedGame = {
-        date: new Date().toLocaleString(),
-        winner: game.winner.name,
-        finalScores: game.players.map(player => ({
-          name: player.name,
-          score: player.score
-        })),
-        rounds: game.rounds
-      };
-
-      savedGames.unshift(completedGame);
-      savedGames = savedGames.slice(0, 10);
-
-      localStorage.setItem("chuchulaGames", JSON.stringify(savedGames));
-    }
-
-    function loadSavedGames() {
-      const savedGames = JSON.parse(localStorage.getItem("chuchulaGames")) || [];
-      const container = document.getElementById("savedGames");
-
-      container.innerHTML = "";
-
-      if (savedGames.length === 0) {
-        container.innerHTML = "<p>No saved games yet.</p>";
-        return;
-      }
-
-      savedGames.forEach((game, index) => {
-        let rows = "";
-
-        game.finalScores.forEach(player => {
-          rows += `
-            <tr>
-              <td>${player.name}</td>
-              <td>${player.score}</td>
-            </tr>
-          `;
-        });
-
-        container.innerHTML += `
-          <div class="history-item">
-            <strong>Game ${index + 1}</strong><br>
-            Date: ${game.date}<br>
-            Winner: ${game.winner}
-
-            <div class="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Player</th>
-                    <th>Final Score</th>
-                  </tr>
-                </thead>
-                <tbody>${rows}</tbody>
-              </table>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function clearSavedGames() {
-      localStorage.removeItem("chuchulaGames");
-      loadSavedGames();
-    }
-
-    function newGame() {
-      location.reload();
-    }
-
-    loadSavedGames();
-  </script>
+    round.type=isTied?"Normal - Tied":"Normal";
+  }
+
+  round.scores=newScores;
+  recalculateScores();
+  updateUI();
+}
+
+function deleteRound(roundIndex){
+  const confirmDelete=confirm(`Delete Round ${roundIndex+1}?`);
+  if(!confirmDelete)return;
+
+  currentGame.rounds.splice(roundIndex,1);
+  recalculateScores();
+  updateUI();
+}
+
+function recalculateScores(){
+  currentGame.players.forEach(player=>player.score=0);
+
+  currentGame.rounds.forEach(round=>{
+    round.scores.forEach(scoreEntry=>{
+      const player=currentGame.players.find(p=>p.name===scoreEntry.name);
+      if(player) player.score+=scoreEntry.points;
+    });
+  });
+
+  currentGame.isOver=false;
+  currentGame.winner=null;
+
+  const winner=currentGame.players.find(player=>player.score>=currentGame.targetScore);
+
+  if(winner){
+    currentGame.isOver=true;
+    currentGame.winner=winner;
+    saveOrUpdateCompletedGame(currentGame);
+    localStorage.removeItem("chuchulaCurrentGame");
+    currentGame.saved=true;
+  }else{
+    removeCompletedGame(currentGame.id);
+    currentGame.saved=false;
+    saveCurrentGame();
+  }
+}
+
+function updateGameOverUI(){
+  const banner=document.getElementById("winnerBanner");
+  const saveNormalBtn=document.getElementById("saveNormalBtn");
+  const saveSpecialBtn=document.getElementById("saveSpecialBtn");
+
+  if(currentGame && currentGame.isOver){
+    banner.classList.remove("hidden");
+    banner.textContent=`🏆 ${currentGame.winner.name} wins with ${currentGame.winner.score} points. Game saved.`;
+    saveNormalBtn.disabled=true;
+    saveSpecialBtn.disabled=true;
+  }else{
+    banner.classList.add("hidden");
+    saveNormalBtn.disabled=false;
+    saveSpecialBtn.disabled=false;
+  }
+}
+
+function saveCurrentGame(){
+  if(currentGame && !currentGame.isOver){
+    localStorage.setItem("chuchulaCurrentGame",JSON.stringify(currentGame));
+  }
+}
+
+function saveOrUpdateCompletedGame(game){
+  let savedGames=JSON.parse(localStorage.getItem("chuchulaGames"))||[];
+
+  const completedGame={
+    id:game.id,
+    date:new Date().toLocaleString(),
+    winner:game.winner.name,
+    finalScores:game.players.map(player=>({name:player.name,score:player.score})),
+    rounds:game.rounds
+  };
+
+  const existingIndex=savedGames.findIndex(saved=>saved.id===game.id);
+
+  if(existingIndex>=0){
+    savedGames[existingIndex]=completedGame;
+  }else{
+    savedGames.unshift(completedGame);
+  }
+
+  savedGames=savedGames.slice(0,10);
+  localStorage.setItem("chuchulaGames",JSON.stringify(savedGames));
+}
+
+function removeCompletedGame(gameId){
+  let savedGames=JSON.parse(localStorage.getItem("chuchulaGames"))||[];
+  savedGames=savedGames.filter(game=>game.id!==gameId);
+  localStorage.setItem("chuchulaGames",JSON.stringify(savedGames));
+}
+
+function loadSavedGames(){
+  const savedGames=JSON.parse(localStorage.getItem("chuchulaGames"))||[];
+  const container=document.getElementById("savedGames");
+  container.innerHTML="";
+
+  if(savedGames.length===0){
+    container.innerHTML="<p>No saved games yet.</p>";
+    return;
+  }
+
+  savedGames.forEach((game,index)=>{
+    let rows="";
+    game.finalScores.forEach(player=>{
+      rows+=`<tr><td>${player.name}</td><td>${player.score}</td></tr>`;
+    });
+
+    container.innerHTML+=`
+      <div class="history-item">
+        <strong>Game ${index+1}</strong><br>
+        Date: ${game.date}<br>
+        Winner: ${game.winner}
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Player</th><th>Final Score</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  });
+}
+
+function clearSavedGames(){
+  localStorage.removeItem("chuchulaGames");
+  loadSavedGames();
+}
+
+showLanding();
+</script>
 </body>
 </html>
