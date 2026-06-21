@@ -4,54 +4,359 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chuchula</title>
+<link rel="icon" type="image/png" href="logo.png">
 
 <style>
+:root{
+  --bg-dark:#12070a;
+  --bg-maroon:#3b0a12;
+  --maroon:#7f1d1d;
+  --maroon-2:#991b1b;
+  --gold:#facc15;
+  --gold-2:#d97706;
+  --cream:#fff7ed;
+  --cream-2:#fffbeb;
+  --ink:#111827;
+  --green:#16a34a;
+  --red:#dc2626;
+  --border-gold:#d4af37;
+}
+
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f4f6;color:#111827;padding-bottom:95px}
-.app{max-width:1000px;margin:auto;padding:16px}
-h1,h2{text-align:center}
-.card{background:white;padding:18px;margin-bottom:18px;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-input,select,button{width:100%;padding:14px;font-size:16px;margin-top:10px;border-radius:12px;border:1px solid #d1d5db}
-button{background:#111827;color:white;font-weight:bold;cursor:pointer;border:none}
-button:disabled{background:#9ca3af}
-.primary{background:#4f63e6}
-.hidden{display:none}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.mode-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.active-btn{background:#4f63e6}
-.edit-btn{background:#2563eb}
-.delete-btn{background:#dc2626}
-.save-btn{background:#16a34a}
-.cancel-btn{background:#6b7280}
-.table-wrapper{overflow-x:auto}
-table{width:100%;border-collapse:collapse;margin-top:12px}
-th{background:#111827;color:white}
-th,td{padding:12px;text-align:center;border-bottom:1px solid #e5e7eb}
-td:first-child,th:first-child{text-align:left;font-weight:bold}
-.round-input{width:80px;text-align:center;margin:0}
-.winner-row{background:#dcfce7;font-weight:bold}
-.message{font-weight:bold;margin-top:10px}
-.error{color:#dc2626}.success{color:#16a34a}.warning{color:#ca8a04}
-.winner-banner{background:#dcfce7;border:2px solid #16a34a;color:#166534;padding:14px;border-radius:12px;text-align:center;font-size:20px;font-weight:bold;margin-bottom:18px}
-.tied-box{display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:bold}
-.tied-box input{width:auto;margin:0}
-.history-item{background:#f9fafb;padding:12px;margin-top:10px;border-radius:12px;border:1px solid #e5e7eb}
-.landing-buttons button{font-size:26px;padding:26px;margin-top:24px;border-radius:14px}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;box-shadow:0 -2px 10px rgba(0,0,0,.15)}
-.bottom-nav button{margin:0;padding:14px;font-size:14px}
-@media(max-width:700px){.grid4,.mode-buttons,.action-row{grid-template-columns:1fr}h1{font-size:26px}th,td{font-size:14px;padding:10px}.landing-buttons button{font-size:22px}}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at top,#8a1d1d 0%,#3b0a12 44%,#12070a 100%);
+  color:var(--cream);
+  padding-bottom:95px;
+}
+
+.app{
+  max-width:1100px;
+  margin:auto;
+  padding:16px;
+}
+
+.brand-header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  margin:10px 0 22px;
+  padding:12px;
+}
+
+.brand-header img{
+  width:92px;
+  height:92px;
+  border-radius:22px;
+  border:2px solid var(--border-gold);
+  box-shadow:0 8px 22px rgba(0,0,0,.45);
+}
+
+.brand-title{
+  text-align:left;
+}
+
+.brand-title h1{
+  margin:0;
+  font-size:44px;
+  line-height:1;
+  color:var(--gold);
+  text-shadow:0 3px 10px rgba(0,0,0,.55);
+}
+
+.brand-title p{
+  margin:8px 0 0;
+  color:#fde68a;
+  font-weight:bold;
+}
+
+h1,h2{
+  text-align:center;
+  color:#fde68a;
+}
+
+.card{
+  background:linear-gradient(180deg,#2a0f15,#1a080c);
+  color:var(--cream);
+  padding:18px;
+  margin-bottom:18px;
+  border-radius:18px;
+  border:1px solid var(--border-gold);
+  box-shadow:0 8px 22px rgba(0,0,0,.35);
+}
+
+input,select,button{
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  margin-top:10px;
+  border-radius:12px;
+  border:1px solid #a16207;
+}
+
+input,select{
+  background:var(--cream);
+  color:var(--ink);
+}
+
+button{
+  background:linear-gradient(135deg,var(--gold),var(--gold-2));
+  color:#1b0f13;
+  font-weight:bold;
+  cursor:pointer;
+  border:none;
+  transition:.2s ease;
+}
+
+button:hover{filter:brightness(1.08)}
+button:disabled{background:#9ca3af;color:#374151;cursor:not-allowed;filter:none}
+
+.primary{
+  background:linear-gradient(135deg,#fde047,#f59e0b);
+  color:#1b0f13;
+}
+
+.hidden{display:none!important}
+
+.grid4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.mode-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.active-btn{
+  background:linear-gradient(135deg,#dc2626,#7f1d1d);
+  color:white;
+  border:1px solid #facc15;
+}
+
+.table-wrapper{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+  background:var(--cream);
+  color:var(--ink);
+  border-radius:12px;
+  overflow:hidden;
+}
+
+th{
+  background:var(--maroon);
+  color:var(--cream);
+}
+
+th,td{
+  padding:12px;
+  text-align:center;
+  border-bottom:1px solid #fed7aa;
+  vertical-align:middle;
+}
+
+td:first-child,th:first-child{
+  text-align:left;
+  font-weight:bold;
+}
+
+tfoot td{
+  background:#fde68a;
+  color:#7f1d1d;
+  font-weight:bold;
+}
+
+.round-input{
+  width:80px;
+  text-align:center;
+  margin:0;
+}
+
+.winner-row{
+  background:#dcfce7;
+  font-weight:bold;
+}
+
+.message{
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.error{color:#fca5a5}
+.success{color:#86efac}
+.warning{color:#fde68a}
+
+.winner-banner{
+  background:#fef3c7;
+  border:2px solid #f59e0b;
+  color:#7c2d12;
+  padding:14px;
+  border-radius:12px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:18px;
+}
+
+.tied-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+  font-weight:bold;
+}
+
+.tied-box input{
+  width:auto;
+  margin:0;
+}
+
+.history-item{
+  background:#3b1d24;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  border:1px solid #92400e;
+}
+
+.landing-buttons button{
+  font-size:26px;
+  padding:24px;
+  margin-top:20px;
+  border-radius:14px;
+}
+
+.action-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+
+.edit-btn{
+  background:#f59e0b;
+  color:#1b0f13;
+  padding:8px;
+  margin:0;
+}
+
+.delete-btn{
+  background:#dc2626;
+  color:white;
+  padding:8px;
+  margin:0;
+}
+
+.save-btn{
+  background:#16a34a;
+  color:white;
+}
+
+.cancel-btn{
+  background:#6b7280;
+  color:white;
+}
+
+.inline-actions{
+  display:flex;
+  gap:6px;
+  justify-content:center;
+  align-items:center;
+}
+
+.inline-actions button{
+  width:auto;
+  min-width:42px;
+}
+
+.edit-panel{
+  background:#fff7ed;
+  color:#111827;
+  border:2px solid #f59e0b;
+  padding:14px;
+  border-radius:12px;
+}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#12070a;
+  padding:10px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  box-shadow:0 -2px 10px rgba(0,0,0,.45);
+  border-top:1px solid var(--border-gold);
+}
+
+.bottom-nav button{
+  margin:0;
+  padding:14px;
+  font-size:14px;
+}
+
+@media(max-width:700px){
+  .grid4,.mode-buttons,.action-row{
+    grid-template-columns:1fr;
+  }
+
+  .brand-header{
+    flex-direction:column;
+  }
+
+  .brand-title{
+    text-align:center;
+  }
+
+  .brand-title h1{
+    font-size:38px;
+  }
+
+  .brand-header img{
+    width:110px;
+    height:110px;
+  }
+
+  th,td{
+    font-size:14px;
+    padding:10px;
+  }
+
+  .landing-buttons button{
+    font-size:22px;
+  }
+}
 </style>
 </head>
 
 <body>
 <div class="app">
-<h1>Chuchula</h1>
+
+<div class="brand-header">
+  <img src="images/logo.png" alt="Chuchula Logo">
+  <div class="brand-title">
+    <h1>Chuchula</h1>
+    <p>Nepali Card Game Score Calculator</p>
+  </div>
+</div>
 
 <div id="landingSection" class="card landing-buttons">
-  <button class="primary" onclick="showNewGame()">New Game</button>
-  <button id="continueBtn" onclick="continueGame()">Continue Game</button>
-  <button onclick="showPreviousGames()">Previous Games</button>
+  <button class="primary" onclick="showNewGame()">🃏 New Game</button>
+  <button id="continueBtn" onclick="continueGame()">▶️ Continue Game</button>
+  <button onclick="showPreviousGames()">📜 Previous Games</button>
 </div>
 
 <div id="newGameSection" class="card hidden">
@@ -62,8 +367,8 @@ td:first-child,th:first-child{text-align:left;font-weight:bold}
     <input id="player3" placeholder="Player 3">
     <input id="player4" placeholder="Player 4">
   </div>
-  <button onclick="startGame()">Start Game</button>
-  <button onclick="showLanding()">Back</button>
+  <button onclick="startGame()">🚀 Start Game</button>
+  <button onclick="showLanding()">⬅️ Back</button>
 </div>
 
 <div id="gameSection" class="hidden">
@@ -80,9 +385,15 @@ td:first-child,th:first-child{text-align:left;font-weight:bold}
 
     <div id="normalRoundCard" class="card">
       <h2>Normal Round</h2>
+
       <div class="table-wrapper">
         <table>
-          <thead><tr><th>Player</th><th>Points</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Points</th>
+            </tr>
+          </thead>
           <tbody id="roundInputs"></tbody>
         </table>
       </div>
@@ -94,13 +405,17 @@ td:first-child,th:first-child{text-align:left;font-weight:bold}
         Tied
       </label>
 
-      <button id="saveNormalBtn" onclick="saveNormalRound()">Save Normal Round</button>
+      <button id="saveNormalBtn" onclick="saveNormalRound()">💾 Save Normal Round</button>
       <p id="normalMessage" class="message"></p>
     </div>
 
     <div id="specialRoundCard" class="card hidden">
       <h2>Special Hand</h2>
-      <select id="specialPlayer"><option value="">Select Player</option></select>
+
+      <select id="specialPlayer">
+        <option value="">Select Player</option>
+      </select>
+
       <select id="specialHand">
         <option value="">Select Special Hand</option>
         <option value="4">Chuchula (+4)</option>
@@ -108,18 +423,9 @@ td:first-child,th:first-child{text-align:left;font-weight:bold}
         <option value="10">3 x 3 of a Kind (+10)</option>
         <option value="7">6 Pairs (+7)</option>
       </select>
-      <button id="saveSpecialBtn" onclick="saveSpecialRound()">Save Special Hand</button>
-      <p id="specialMessage" class="message"></p>
-    </div>
 
-    <div class="card">
-      <h2>Current Scores</h2>
-      <div class="table-wrapper">
-        <table>
-          <thead><tr><th>Player</th><th>Total</th><th>Status</th></tr></thead>
-          <tbody id="scoreboard"></tbody>
-        </table>
-      </div>
+      <button id="saveSpecialBtn" onclick="saveSpecialRound()">⭐ Save Special Hand</button>
+      <p id="specialMessage" class="message"></p>
     </div>
   </div>
 
@@ -131,24 +437,47 @@ td:first-child,th:first-child{text-align:left;font-weight:bold}
   </div>
 </div>
 
+<div id="scoreboardCard" class="card">
+  <h2>🏆 Current Scores</h2>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Total</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="scoreboard"></tbody>
+    </table>
+  </div>
+</div>
+
 <div id="previousGamesSection" class="card hidden">
   <h2>Previous Games</h2>
   <div id="savedGames"></div>
-  <button onclick="clearSavedGames()">Clear Saved Games</button>
-  <button onclick="showLanding()">Back</button>
+  <button onclick="clearSavedGames()">🗑️ Clear Saved Games</button>
+  <button onclick="showLanding()">⬅️ Back</button>
 </div>
+
 </div>
 
 <div id="bottomNav" class="bottom-nav hidden">
-  <button onclick="showGameScreen('play')">Play Game</button>
-  <button onclick="showGameScreen('scorecard')">Scorecard</button>
-  <button onclick="showLanding()">Home</button>
+  <button onclick="showGameScreen('play')">🃏 Play</button>
+  <button onclick="showGameScreen('scorecard')">📋 Scorecard</button>
+  <button onclick="showLanding()">🏠 Home</button>
 </div>
 
 <script>
 class Player{
-  constructor(name,score=0){this.name=name;this.score=score}
-  addPoints(points){this.score+=points}
+  constructor(name,score=0){
+    this.name=name;
+    this.score=score;
+  }
+
+  addPoints(points){
+    this.score+=points;
+  }
 }
 
 class Round{
@@ -171,11 +500,16 @@ class Game{
   }
 
   addRound(round){
-    if(this.isOver){alert("Game is already over.");return}
+    if(this.isOver){
+      alert("Game is already over.");
+      return;
+    }
 
     round.scores.forEach(scoreEntry=>{
       const player=this.players.find(p=>p.name===scoreEntry.name);
-      if(player){player.addPoints(scoreEntry.points)}
+      if(player){
+        player.addPoints(scoreEntry.points);
+      }
     });
 
     this.rounds.push(round);
@@ -185,6 +519,7 @@ class Game{
 
   checkWinner(){
     const winner=this.players.find(player=>player.score>=this.targetScore);
+
     if(winner){
       this.isOver=true;
       this.winner=winner;
@@ -209,6 +544,7 @@ function showLanding(){
   hideAll();
   document.getElementById("landingSection").classList.remove("hidden");
   refreshLanding();
+  updateScoreboard();
 }
 
 function refreshLanding(){
@@ -241,9 +577,14 @@ function startGame(){
 
 function continueGame(){
   const saved=localStorage.getItem("chuchulaCurrentGame");
-  if(!saved){alert("No game to continue.");return}
+
+  if(!saved){
+    alert("No game to continue.");
+    return;
+  }
 
   const data=JSON.parse(saved);
+
   currentGame=new Game(
     data.players.map(p=>new Player(p.name,p.score)),
     data.rounds.map(r=>new Round(r.type,r.scores,r.date)),
@@ -260,6 +601,7 @@ function openGame(){
   hideAll();
   document.getElementById("gameSection").classList.remove("hidden");
   document.getElementById("bottomNav").classList.remove("hidden");
+
   buildRoundInputs();
   buildSpecialPlayerDropdown();
   updateUI();
@@ -272,8 +614,14 @@ function showGameScreen(screen){
   document.getElementById("playScreen").classList.add("hidden");
   document.getElementById("scorecardScreen").classList.add("hidden");
 
-  if(screen==="play") document.getElementById("playScreen").classList.remove("hidden");
-  if(screen==="scorecard") document.getElementById("scorecardScreen").classList.remove("hidden");
+  if(screen==="play"){
+    document.getElementById("playScreen").classList.remove("hidden");
+  }
+
+  if(screen==="scorecard"){
+    document.getElementById("scorecardScreen").classList.remove("hidden");
+    updateRoundHistory();
+  }
 }
 
 function showPreviousGames(){
@@ -307,14 +655,18 @@ function buildRoundInputs(){
     container.innerHTML+=`
       <tr>
         <td>${player.name}</td>
-        <td><input class="round-input" type="number" min="0" step="1" value="0" id="roundScore${index}" oninput="updateRoundTotal()"></td>
-      </tr>`;
+        <td>
+          <input class="round-input" type="number" min="0" step="1" value="0" id="roundScore${index}" oninput="updateRoundTotal()">
+        </td>
+      </tr>
+    `;
   });
 }
 
 function buildSpecialPlayerDropdown(){
   const select=document.getElementById("specialPlayer");
   select.innerHTML=`<option value="">Select Player</option>`;
+
   currentGame.players.forEach(player=>{
     select.innerHTML+=`<option value="${player.name}">${player.name}</option>`;
   });
@@ -334,7 +686,7 @@ function updateRoundTotal(){
       hasNegative=true;
       input.style.border="3px solid red";
     }else{
-      input.style.border="1px solid #d1d5db";
+      input.style.border="1px solid #a16207";
     }
 
     total+=points;
@@ -342,6 +694,7 @@ function updateRoundTotal(){
 
   const isTied=document.getElementById("tiedCheckbox").checked;
   const totalText=document.getElementById("roundTotalText");
+
   totalText.className="message";
 
   if(hasNegative){
@@ -351,8 +704,8 @@ function updateRoundTotal(){
     totalText.textContent=`❌ Round Total: ${total} / 4. Total cannot be over 4.`;
     totalText.classList.add("error");
   }else if(total<4 && !isTied){
-    totalText.textContent=` Round Total: ${total} / 4. Check Tied if total is less than 4.`;
-    //totalText.classList.add("warning");
+    totalText.textContent=`⚠️ Round Total: ${total} / 4. Check Tied if total is less than 4.`;
+    totalText.classList.add("warning");
   }else if(total<4 && isTied){
     totalText.textContent=`✅ Round Total: ${total} / 4. Tied round accepted.`;
     totalText.classList.add("success");
@@ -369,7 +722,11 @@ function saveNormalRound(){
 
   currentGame.players.forEach((player,index)=>{
     const points=Number(document.getElementById("roundScore"+index).value);
-    if(points<0)hasNegative=true;
+
+    if(points<0){
+      hasNegative=true;
+    }
+
     scores.push({name:player.name,points});
     total+=points;
   });
@@ -434,14 +791,21 @@ function updateScoreboard(){
   const scoreboard=document.getElementById("scoreboard");
   scoreboard.innerHTML="";
 
+  if(!currentGame){
+    scoreboard.innerHTML="<tr><td colspan='3'>No active game</td></tr>";
+    return;
+  }
+
   currentGame.players.forEach(player=>{
     const isWinner=currentGame.winner && currentGame.winner.name===player.name;
+
     scoreboard.innerHTML+=`
       <tr class="${isWinner?"winner-row":""}">
         <td>${player.name}</td>
         <td>${player.score}</td>
         <td>${isWinner?"🏆 Winner":"Playing"}</td>
-      </tr>`;
+      </tr>
+    `;
   });
 }
 
@@ -454,52 +818,129 @@ function updateRoundHistory(){
     return;
   }
 
+  let header=`
+    <tr>
+      <th>Round</th>
+      <th>Type</th>
+  `;
+
+  currentGame.players.forEach(player=>{
+    header+=`<th>${player.name}</th>`;
+  });
+
+  header+=`
+      <th>Total</th>
+      <th>Actions</th>
+    </tr>
+  `;
+
+  let body="";
+  let playerTotals={};
+
+  currentGame.players.forEach(player=>{
+    playerTotals[player.name]=0;
+  });
+
   currentGame.rounds.forEach((round,index)=>{
-    let rows="";
-    round.scores.forEach(score=>{
-      rows+=`<tr><td>${score.name}</td><td>${score.points}</td></tr>`;
+    let roundTotal=0;
+
+    body+=`
+      <tr>
+        <td>${index+1}</td>
+        <td>${round.type}<br><small>${round.date}</small></td>
+    `;
+
+    currentGame.players.forEach(player=>{
+      const scoreEntry=round.scores.find(s=>s.name===player.name);
+      const points=scoreEntry ? scoreEntry.points : 0;
+
+      playerTotals[player.name]+=points;
+      roundTotal+=points;
+
+      body+=`<td>${points}</td>`;
     });
 
-    history.innerHTML+=`
-      <div class="history-item">
-        <strong>Round ${index+1}: ${round.type}</strong><br>
-        <small>${round.date}</small>
-
-        <div class="action-row">
-          <button class="edit-btn" onclick="editRound(${index})">✏️ Edit</button>
-          <button class="delete-btn" onclick="deleteRound(${index})">🗑️ Delete</button>
-        </div>
-
-        <div class="table-wrapper">
-          <table>
-            <thead><tr><th>Player</th><th>Points</th></tr></thead>
-            <tbody id="roundBody_${index}">${rows}</tbody>
-          </table>
-        </div>
-
-        <div id="editArea_${index}"></div>
-      </div>`;
+    body+=`
+        <td><strong>${roundTotal}</strong></td>
+        <td>
+          <div class="inline-actions">
+            <button class="edit-btn" onclick="editRound(${index})">✏️</button>
+            <button class="delete-btn" onclick="deleteRound(${index})">🗑️</button>
+          </div>
+        </td>
+      </tr>
+      <tr id="editRow_${index}" class="hidden">
+        <td colspan="${currentGame.players.length+4}">
+          <div id="editArea_${index}" class="edit-panel"></div>
+        </td>
+      </tr>
+    `;
   });
+
+  let footer=`
+    <tr>
+      <td colspan="2">TOTAL</td>
+  `;
+
+  currentGame.players.forEach(player=>{
+    footer+=`<td>${playerTotals[player.name]}</td>`;
+  });
+
+  const grandTotal=Object.values(playerTotals).reduce((sum,value)=>sum+value,0);
+
+  footer+=`
+      <td>${grandTotal}</td>
+      <td></td>
+    </tr>
+  `;
+
+  history.innerHTML=`
+    <div class="table-wrapper">
+      <table>
+        <thead>${header}</thead>
+        <tbody>${body}</tbody>
+        <tfoot>${footer}</tfoot>
+      </table>
+    </div>
+  `;
 }
 
 function editRound(roundIndex){
   const round=currentGame.rounds[roundIndex];
+  const editRow=document.getElementById(`editRow_${roundIndex}`);
+  const editArea=document.getElementById(`editArea_${roundIndex}`);
+
   let rows="";
 
   round.scores.forEach((score,playerIndex)=>{
     rows+=`
       <tr>
         <td>${score.name}</td>
-        <td><input class="round-input" type="number" min="0" step="1" value="${score.points}" id="edit_${roundIndex}_${playerIndex}"></td>
-      </tr>`;
+        <td>
+          <input class="round-input" type="number" min="0" step="1" value="${score.points}" id="edit_${roundIndex}_${playerIndex}">
+        </td>
+      </tr>
+    `;
   });
 
-  document.getElementById(`roundBody_${roundIndex}`).innerHTML=rows;
-
-  const isNormalRound=round.type.startsWith("Normal");
   const isTied=round.type.includes("Tied")?"checked":"";
+  const isNormalRound=round.type.startsWith("Normal");
 
-  document.getElementById(`editArea_${roundIndex}`).innerHTML=`
+  editArea.innerHTML=`
+    <strong>Edit Round ${roundIndex+1}: ${round.type}</strong>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+
     ${isNormalRound?`
       <label class="tied-box">
         <input type="checkbox" id="editTied_${roundIndex}" ${isTied}>
@@ -511,29 +952,38 @@ function editRound(roundIndex){
 
     <div class="action-row">
       <button class="save-btn" onclick="saveRoundEdit(${roundIndex})">💾 Save Changes</button>
-      <button class="cancel-btn" onclick="updateRoundHistory()">Cancel</button>
-    </div>`;
+      <button class="cancel-btn" onclick="cancelRoundEdit(${roundIndex})">Cancel</button>
+    </div>
+  `;
+
+  editRow.classList.remove("hidden");
+}
+
+function cancelRoundEdit(roundIndex){
+  document.getElementById(`editRow_${roundIndex}`).classList.add("hidden");
 }
 
 function saveRoundEdit(roundIndex){
   const round=currentGame.rounds[roundIndex];
-  const newScores=[];
   let total=0;
   let hasNegative=false;
 
   round.scores.forEach((score,playerIndex)=>{
     const value=Number(document.getElementById(`edit_${roundIndex}_${playerIndex}`).value);
-    if(value<0) hasNegative=true;
-    newScores.push({name:score.name,points:value});
+
+    if(value<0){
+      hasNegative=true;
+    }
+
+    score.points=value;
     total+=value;
   });
 
-  const messageElement=document.getElementById(`editMessage_${roundIndex}`);
   const isNormalRound=round.type.startsWith("Normal");
 
   if(hasNegative){
-    messageElement.className="message error";
-    messageElement.textContent="Points cannot be negative.";
+    document.getElementById(`editMessage_${roundIndex}`).className="message error";
+    document.getElementById(`editMessage_${roundIndex}`).textContent="Points cannot be negative.";
     return;
   }
 
@@ -541,28 +991,30 @@ function saveRoundEdit(roundIndex){
     const isTied=document.getElementById(`editTied_${roundIndex}`).checked;
 
     if(total>4){
-      messageElement.className="message error";
-      messageElement.textContent="Normal round total cannot be over 4.";
+      document.getElementById(`editMessage_${roundIndex}`).className="message error";
+      document.getElementById(`editMessage_${roundIndex}`).textContent="Normal round total cannot be over 4.";
       return;
     }
 
     if(total<4 && !isTied){
-      messageElement.className="message error";
-      messageElement.textContent="If total is less than 4, Tied must be checked.";
+      document.getElementById(`editMessage_${roundIndex}`).className="message error";
+      document.getElementById(`editMessage_${roundIndex}`).textContent="If total is less than 4, Tied must be checked.";
       return;
     }
 
     round.type=isTied?"Normal - Tied":"Normal";
   }
 
-  round.scores=newScores;
   recalculateScores();
   updateUI();
 }
 
 function deleteRound(roundIndex){
   const confirmDelete=confirm(`Delete Round ${roundIndex+1}?`);
-  if(!confirmDelete)return;
+
+  if(!confirmDelete){
+    return;
+  }
 
   currentGame.rounds.splice(roundIndex,1);
   recalculateScores();
@@ -570,12 +1022,16 @@ function deleteRound(roundIndex){
 }
 
 function recalculateScores(){
-  currentGame.players.forEach(player=>player.score=0);
+  currentGame.players.forEach(player=>{
+    player.score=0;
+  });
 
   currentGame.rounds.forEach(round=>{
     round.scores.forEach(scoreEntry=>{
       const player=currentGame.players.find(p=>p.name===scoreEntry.name);
-      if(player) player.score+=scoreEntry.points;
+      if(player){
+        player.score+=scoreEntry.points;
+      }
     });
   });
 
@@ -591,7 +1047,7 @@ function recalculateScores(){
     localStorage.removeItem("chuchulaCurrentGame");
     currentGame.saved=true;
   }else{
-    removeCompletedGame(currentGame.id);
+    removeSavedGame(currentGame.id);
     currentGame.saved=false;
     saveCurrentGame();
   }
@@ -605,10 +1061,13 @@ function updateGameOverUI(){
   if(currentGame && currentGame.isOver){
     banner.classList.remove("hidden");
     banner.textContent=`🏆 ${currentGame.winner.name} wins with ${currentGame.winner.score} points. Game saved.`;
+
     saveNormalBtn.disabled=true;
     saveSpecialBtn.disabled=true;
   }else{
     banner.classList.add("hidden");
+    banner.textContent="";
+
     saveNormalBtn.disabled=false;
     saveSpecialBtn.disabled=false;
   }
@@ -627,7 +1086,10 @@ function saveOrUpdateCompletedGame(game){
     id:game.id,
     date:new Date().toLocaleString(),
     winner:game.winner.name,
-    finalScores:game.players.map(player=>({name:player.name,score:player.score})),
+    finalScores:game.players.map(player=>({
+      name:player.name,
+      score:player.score
+    })),
     rounds:game.rounds
   };
 
@@ -640,10 +1102,11 @@ function saveOrUpdateCompletedGame(game){
   }
 
   savedGames=savedGames.slice(0,10);
+
   localStorage.setItem("chuchulaGames",JSON.stringify(savedGames));
 }
 
-function removeCompletedGame(gameId){
+function removeSavedGame(gameId){
   let savedGames=JSON.parse(localStorage.getItem("chuchulaGames"))||[];
   savedGames=savedGames.filter(game=>game.id!==gameId);
   localStorage.setItem("chuchulaGames",JSON.stringify(savedGames));
@@ -652,6 +1115,7 @@ function removeCompletedGame(gameId){
 function loadSavedGames(){
   const savedGames=JSON.parse(localStorage.getItem("chuchulaGames"))||[];
   const container=document.getElementById("savedGames");
+
   container.innerHTML="";
 
   if(savedGames.length===0){
@@ -661,8 +1125,14 @@ function loadSavedGames(){
 
   savedGames.forEach((game,index)=>{
     let rows="";
+
     game.finalScores.forEach(player=>{
-      rows+=`<tr><td>${player.name}</td><td>${player.score}</td></tr>`;
+      rows+=`
+        <tr>
+          <td>${player.name}</td>
+          <td>${player.score}</td>
+        </tr>
+      `;
     });
 
     container.innerHTML+=`
@@ -670,13 +1140,20 @@ function loadSavedGames(){
         <strong>Game ${index+1}</strong><br>
         Date: ${game.date}<br>
         Winner: ${game.winner}
+
         <div class="table-wrapper">
           <table>
-            <thead><tr><th>Player</th><th>Final Score</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Final Score</th>
+              </tr>
+            </thead>
             <tbody>${rows}</tbody>
           </table>
         </div>
-      </div>`;
+      </div>
+    `;
   });
 }
 
